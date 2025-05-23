@@ -5,4 +5,7 @@ export const API_ENDPOINTS = {
       REFRESH_TOKEN: '/auth/refresh-token',
       ME: '/auth/me',
    },
+   CONTACT: {
+      CONTACT: 'contact/contact-us'
+   }
 } as const; 

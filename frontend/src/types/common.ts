@@ -4,3 +4,9 @@ import { NextPage } from 'next';
 export type NextPageWithLayout<P = object, IP = P> = NextPage<P, IP> & {
    getLayout?: (page: ReactElement) => ReactNode;
 };
+
+export interface IDocument {
+   _id: string,
+   createdAt: string;
+   updatedAt: string
+}

@@ -1,6 +1,6 @@
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/utils/constant';
 import axios, { AxiosError, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
-import { deleteCookie } from 'cookies-next';
+import { deleteCookie, getCookie } from 'cookies-next';
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
@@ -15,7 +15,7 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
    (config: InternalAxiosRequestConfig) => {
       // Get token from localStorage
-      const token = localStorage.getItem('token');
+      const token = getCookie(ACCESS_TOKEN)
       if (token) {
          config.headers.Authorization = `Bearer ${token}`;
       }

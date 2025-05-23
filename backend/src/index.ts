@@ -6,6 +6,8 @@ import path from 'path';
 
 // Routes
 import authRoutes from './routes/auth.routes';
+import contactRoutes from './routes/contact.routes'
+import { errorHandler } from './middleware/error.middleware';
 
 
 dotenv.config();
@@ -26,7 +28,10 @@ mongoose
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/contact', contactRoutes)
 
+// Error handling
+app.use(errorHandler);
 
 
 const PORT = process.env.PORT || 5000;

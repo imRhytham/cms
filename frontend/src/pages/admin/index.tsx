@@ -1,16 +1,22 @@
 import { NextPageWithLayout } from "@/types/common";
-import LandingLayout from "@/components/layout/LandingLayout";
+import { Tabs } from "@mantine/core";
+import SubmissionList from "@/components/modules/admin/SubmissionList";
 
-const Home: NextPageWithLayout = () => {
+const Page: NextPageWithLayout = () => {
 	return (
-		<div className="container mx-auto px-4 md:px-6 lg:px-8">
-			<h1 className="text-4xl font-bold">Hello World</h1>
+		<div className="container mx-auto p-4 md:p-6 lg:p-8">
+			<h1 className="text-4xl font-bold">Admin Dashboard</h1>
+			<Tabs variant="outline" className="mt-5" defaultValue="Queries">
+				<Tabs.List grow>
+					<Tabs.Tab value="Queries">Queries</Tabs.Tab>
+					<Tabs.Tab value="Banner">Upload Banner</Tabs.Tab>
+				</Tabs.List>
+				<Tabs.Panel value="Queries" className="mt-5">
+					<SubmissionList />
+				</Tabs.Panel>
+			</Tabs>
 		</div>
 	);
 };
 
-Home.getLayout = function getLayout(page: React.ReactElement) {
-	return <LandingLayout>{page}</LandingLayout>;
-};
-
-export default Home;
+export default Page;
