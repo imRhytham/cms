@@ -21,8 +21,8 @@ const App = ({
 
 	return (
 		<>
-			<ColorSchemeScript defaultColorScheme="dark" />
-			<MantineProvider theme={theme} defaultColorScheme="dark">
+			<ColorSchemeScript defaultColorScheme="light" />
+			<MantineProvider theme={theme} defaultColorScheme="light">
 				<Notifications />
 				{getLayout(<Component {...pageProps} />)}
 			</MantineProvider>

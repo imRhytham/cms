@@ -56,12 +56,6 @@ export const login = async (req: Request, res: Response) => {
       await user.save();
 
       res.json({
-         user: {
-            id: user._id,
-            name: user.name,
-            email: user.email,
-            role: user.role,
-         },
          accessToken,
          refreshToken,
       });
