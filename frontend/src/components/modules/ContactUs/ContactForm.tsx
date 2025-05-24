@@ -74,9 +74,24 @@ const ContactForm: React.FC = () => {
 			<form onSubmit={handleSubmit} className="space-y-6">
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 					<ControlledTextInput name="name" label="Full Name" withAsterisk />
-					<ControlledTextInput name="email" label="Email" withAsterisk />
-					<ControlledTextInput name="phone" label="Phone Number" withAsterisk />
-					<ControlledTextInput name="pincode" label="Pin Code" withAsterisk />
+					<ControlledTextInput
+						name="email"
+						label="Email"
+						withAsterisk
+						inputMode="email"
+					/>
+					<ControlledTextInput
+						name="phone"
+						label="Phone Number"
+						withAsterisk
+						inputMode="tel"
+					/>
+					<ControlledTextInput
+						name="pincode"
+						label="Pin Code"
+						withAsterisk
+						inputMode="numeric"
+					/>
 					<ControlledTextarea
 						name="message"
 						label="Message"
