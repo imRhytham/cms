@@ -1,6 +1,7 @@
 import { NextPageWithLayout } from "@/types/common";
 import { Tabs } from "@mantine/core";
 import SubmissionList from "@/components/modules/admin/SubmissionList";
+import BannerUpload from "@/components/modules/admin/BannerManagement";
 
 const Page: NextPageWithLayout = () => {
 	return (
@@ -13,6 +14,9 @@ const Page: NextPageWithLayout = () => {
 				</Tabs.List>
 				<Tabs.Panel value="Queries" className="mt-5">
 					<SubmissionList />
+				</Tabs.Panel>
+				<Tabs.Panel value="Banner" className="mt-5">
+					<BannerUpload />
 				</Tabs.Panel>
 			</Tabs>
 		</div>

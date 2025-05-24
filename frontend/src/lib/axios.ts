@@ -1,6 +1,7 @@
-import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/utils/constant';
+import { ACCESS_TOKEN } from '@/utils/constant';
 import axios, { AxiosError, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
-import { deleteCookie, getCookie } from 'cookies-next';
+import { getCookie } from 'cookies-next';
+import { authService } from '@/services/auth.service';
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
@@ -14,8 +15,7 @@ const axiosInstance = axios.create({
 // Request interceptor
 axiosInstance.interceptors.request.use(
    (config: InternalAxiosRequestConfig) => {
-      // Get token from localStorage
-      const token = getCookie(ACCESS_TOKEN)
+      const token = getCookie(ACCESS_TOKEN);
       if (token) {
          config.headers.Authorization = `Bearer ${token}`;
       }
@@ -37,11 +37,18 @@ axiosInstance.interceptors.response.use(
          originalRequest._retry = true;
 
          try {
-            deleteCookie(ACCESS_TOKEN)
-            deleteCookie(REFRESH_TOKEN)
-            // Redirect to login page
-            window.location.href = '/admin/login';
+            // Try to refresh the token
+            const newAccessToken = await authService.refreshToken();
+
+            // Update the authorization header
+            originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+
+            // Retry the original request
+            return axiosInstance(originalRequest);
          } catch (refreshError) {
+            // If refresh token fails, logout and redirect to login
+            await authService.logout();
+            window.location.href = '/admin/login';
             return Promise.reject(refreshError);
          }
       }

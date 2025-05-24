@@ -1,10 +1,12 @@
 import { NextPageWithLayout } from "@/types/common";
 import LandingLayout from "@/components/layout/LandingLayout";
 import ContactForm from "@/components/modules/ContactUs/ContactForm";
+import DynamicBanner from "@/components/modules/ContactUs/DynamicBanner";
 
 const Home: NextPageWithLayout = () => {
 	return (
-		<main className="w-screen">
+		<div>
+			<DynamicBanner />
 			<section className="bg-gradient-to-b from-blue-50 to-white py-12 md:py-20">
 				<div className="container mx-auto px-4">
 					<div className="max-w-3xl mx-auto text-center">
@@ -28,7 +30,7 @@ const Home: NextPageWithLayout = () => {
 					</div>
 				</div>
 			</section>
-		</main>
+		</div>
 	);
 };
 

@@ -1,20 +1,8 @@
 import { useEffect, useState } from "react";
 import { Table } from "@mantine/core";
-
 import { showNotification } from "@mantine/notifications";
-import axiosInstance from "@/lib/axios";
-import { isAxiosError } from "axios";
-
-interface Contact {
-	id: string;
-	name: string;
-	email: string;
-	phone: string;
-	pincode: string;
-	message: string;
-	status: "pending" | "in-progress" | "completed" | "rejected";
-	createdAt: string;
-}
+import { contactUsService } from "@/services/contactus.service";
+import type { Contact } from "@/types/contactUs";
 
 const SubmissionList = () => {
 	const [submissions, setSubmissions] = useState<Contact[]>([]);
@@ -22,16 +10,13 @@ const SubmissionList = () => {
 
 	const fetchSubmissions = async () => {
 		try {
-			const { data } = await axiosInstance.get("/contact");
-			setSubmissions(data.contacts);
+			const contacts = await contactUsService.getContacts();
+			setSubmissions(contacts);
 		} catch (err) {
-			const message = isAxiosError(err)
-				? err.response?.data?.message || "Failed to fetch submissions"
-				: "Failed to fetch submissions";
-
 			showNotification({
 				title: "Error",
-				message,
+				message:
+					err instanceof Error ? err.message : "Failed to fetch submissions",
 				color: "red",
 			});
 		} finally {
@@ -72,7 +57,7 @@ const SubmissionList = () => {
 				</Table.Thead>
 				<Table.Tbody>
 					{submissions.map((submission) => (
-						<Table.Tr key={submission.id}>
+						<Table.Tr key={submission._id}>
 							<Table.Td>{submission.name}</Table.Td>
 							<Table.Td>{submission.email}</Table.Td>
 							<Table.Td>{submission.phone}</Table.Td>

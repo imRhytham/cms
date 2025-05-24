@@ -2,7 +2,7 @@ import { isAxiosError } from 'axios';
 import axiosInstance from '@/lib/axios';
 import { API_ENDPOINTS } from '@/constants/api';
 import type { LoginCredentials, LoginResponse, ApiError } from '@/types/auth';
-import { setCookie } from 'cookies-next';
+import { setCookie, deleteCookie, getCookie } from 'cookies-next';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/utils/constant';
 
 
@@ -14,9 +14,7 @@ class AuthService {
             credentials
          );
 
-         setCookie(ACCESS_TOKEN, data.accessToken)
-         setCookie(REFRESH_TOKEN, data.refreshToken)
-
+         this.setTokens(data.accessToken, data.refreshToken);
          return data;
       } catch (error: unknown) {
          if (isAxiosError(error)) {
@@ -31,8 +29,27 @@ class AuthService {
       try {
          await axiosInstance.post(API_ENDPOINTS.AUTH.LOGOUT);
       } finally {
-         // Clear token regardless of API call success
-         localStorage.removeItem('token');
+         this.clearTokens();
+      }
+   }
+
+   async refreshToken(): Promise<string> {
+      try {
+         const refreshToken = getCookie(REFRESH_TOKEN);
+         if (!refreshToken) {
+            throw new Error('No refresh token available');
+         }
+
+         const { data } = await axiosInstance.post<LoginResponse>(
+            API_ENDPOINTS.AUTH.REFRESH_TOKEN,
+            { refreshToken }
+         );
+
+         this.setTokens(data.accessToken, data.refreshToken);
+         return data.accessToken;
+      } catch (error) {
+         this.clearTokens();
+         throw error;
       }
    }
 
@@ -49,8 +66,18 @@ class AuthService {
       }
    }
 
+   private setTokens(accessToken: string, refreshToken: string) {
+      setCookie(ACCESS_TOKEN, accessToken);
+      setCookie(REFRESH_TOKEN, refreshToken);
+   }
+
+   private clearTokens() {
+      deleteCookie(ACCESS_TOKEN);
+      deleteCookie(REFRESH_TOKEN);
+   }
+
    isAuthenticated(): boolean {
-      return !!localStorage.getItem('token');
+      return !!getCookie(ACCESS_TOKEN);
    }
 }
 

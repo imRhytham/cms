@@ -5,7 +5,7 @@ export interface IMedia extends Document {
    originalName: string;
    mimeType: string;
    size: number;
-   path: string;
+   url: string;
    uploadedBy: mongoose.Types.ObjectId;
    createdAt: Date;
    updatedAt: Date;
@@ -29,7 +29,7 @@ const mediaSchema = new Schema<IMedia>(
          type: Number,
          required: true,
       },
-      path: {
+      url: {
          type: String,
          required: true,
       },
