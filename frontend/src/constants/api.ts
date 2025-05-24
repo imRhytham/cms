@@ -6,7 +6,8 @@ export const API_ENDPOINTS = {
       ME: '/auth/me',
    },
    CONTACT: {
-      CONTACT: '/contact/contact-us'
+      CONTACT: '/contact/contact-us',
+      CONTACTS: '/contact'
    },
    MEDIA: {
       UPDATE: '/file/update',

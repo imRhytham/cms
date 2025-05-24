@@ -1,17 +1,20 @@
-import { useEffect, useState } from "react";
-import { Table } from "@mantine/core";
+import { useEffect, useState, useCallback } from "react";
+import { Table, Pagination } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
 import { contactUsService } from "@/services/contactus.service";
 import type { Contact } from "@/types/contactUs";
+import type { PaginatedResponse } from "@/services/contactus.service";
 
 const SubmissionList = () => {
-	const [submissions, setSubmissions] = useState<Contact[]>([]);
+	const [data, setData] = useState<PaginatedResponse<Contact> | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
+	const [page, setPage] = useState(1);
+	const limit = 10;
 
-	const fetchSubmissions = async () => {
+	const fetchSubmissions = useCallback(async () => {
 		try {
-			const contacts = await contactUsService.getContacts();
-			setSubmissions(contacts);
+			const response = await contactUsService.getContacts({ page, limit });
+			setData(response);
 		} catch (err) {
 			showNotification({
 				title: "Error",
@@ -22,17 +25,17 @@ const SubmissionList = () => {
 		} finally {
 			setIsLoading(false);
 		}
-	};
+	}, [page, limit]);
 
 	useEffect(() => {
 		fetchSubmissions();
-	}, []);
+	}, [fetchSubmissions]);
 
 	if (isLoading) {
 		return <div className="text-center py-8">Loading submissions...</div>;
 	}
 
-	if (submissions.length === 0) {
+	if (!data || data.contacts.length === 0) {
 		return (
 			<div className="bg-white p-8 rounded-lg shadow-sm border text-center">
 				<p className="text-lg text-gray-500">No form submissions yet</p>
@@ -56,7 +59,7 @@ const SubmissionList = () => {
 					</Table.Tr>
 				</Table.Thead>
 				<Table.Tbody>
-					{submissions.map((submission) => (
+					{data.contacts.map((submission) => (
 						<Table.Tr key={submission._id}>
 							<Table.Td>{submission.name}</Table.Td>
 							<Table.Td>{submission.email}</Table.Td>
@@ -65,7 +68,6 @@ const SubmissionList = () => {
 							<Table.Td className="max-w-xs truncate">
 								{submission.message}
 							</Table.Td>
-
 							<Table.Td>
 								{new Date(submission.createdAt).toLocaleDateString()}
 							</Table.Td>
@@ -73,6 +75,15 @@ const SubmissionList = () => {
 					))}
 				</Table.Tbody>
 			</Table>
+
+			<div className="flex justify-center mt-4">
+				<Pagination
+					total={data.pagination.totalPages}
+					value={page}
+					onChange={setPage}
+					withEdges
+				/>
+			</div>
 		</div>
 	);
 };

@@ -43,13 +43,22 @@ export const submitContact = async (req: Request, res: Response) => {
 // Get all contacts (admin only)
 export const getContacts = async (req: Request, res: Response) => {
    try {
-      const contacts = await Contact.find()
-         .sort({ createdAt: -1 })
-         .select('-__v');
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const skip = (page - 1) * limit;
+
+      const [contacts, total] = await Promise.all([
+         Contact.find()
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit)
+            .select('-__v'),
+         Contact.countDocuments()
+      ]);
 
       res.json({
          contacts: contacts.map((contact) => ({
-            id: contact._id,
+            _id: contact._id,
             name: contact.name,
             email: contact.email,
             message: contact.message,
@@ -58,6 +67,12 @@ export const getContacts = async (req: Request, res: Response) => {
             createdAt: contact.createdAt,
             updatedAt: contact.updatedAt,
          })),
+         pagination: {
+            total,
+            page,
+            limit,
+            totalPages: Math.ceil(total / limit)
+         }
       });
    } catch (error) {
       res.status(500).json({ error: 'Error fetching contacts' });
