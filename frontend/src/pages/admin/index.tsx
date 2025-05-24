@@ -2,6 +2,9 @@ import { NextPageWithLayout } from "@/types/common";
 import { Tabs } from "@mantine/core";
 import SubmissionList from "@/components/modules/admin/SubmissionList";
 import BannerUpload from "@/components/modules/admin/BannerManagement";
+import { GetServerSideProps } from "next";
+import { getCookie } from "cookies-next";
+import { ACCESS_TOKEN } from "@/utils/constant";
 
 const Page: NextPageWithLayout = () => {
 	return (
@@ -21,6 +24,23 @@ const Page: NextPageWithLayout = () => {
 			</Tabs>
 		</div>
 	);
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+	const token = getCookie(ACCESS_TOKEN, { req: context.req, res: context.res });
+
+	if (!token) {
+		return {
+			redirect: {
+				destination: "/admin/login",
+				permanent: false,
+			},
+		};
+	}
+
+	return {
+		props: {},
+	};
 };
 
 export default Page;

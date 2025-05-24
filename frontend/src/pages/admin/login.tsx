@@ -10,6 +10,9 @@ import { ControlledTextInput } from "@/components/shared/TextInput/ControlledTex
 import { ControlledPasswordInput } from "@/components/shared/PasswordInput/ControlledPasswordInput";
 import { showNotification } from "@mantine/notifications";
 import "@/utils/yup";
+import { ACCESS_TOKEN } from "@/utils/constant";
+import { GetServerSideProps } from "next";
+import { getCookie } from "cookies-next";
 
 // Validation schema
 const loginSchema = yup.object().shape({
@@ -87,6 +90,23 @@ const LoginPage = () => {
 			</div>
 		</div>
 	);
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+	const token = getCookie(ACCESS_TOKEN, { req: context.req, res: context.res });
+
+	if (token) {
+		return {
+			redirect: {
+				destination: "/admin",
+				permanent: false,
+			},
+		};
+	}
+
+	return {
+		props: {},
+	};
 };
 
 export default LoginPage;
