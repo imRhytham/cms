@@ -2,11 +2,11 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-import path from 'path';
 
 // Routes
 import authRoutes from './routes/auth.routes';
 import contactRoutes from './routes/contact.routes'
+import mediaRoutes from './routes/media.routes'
 import { errorHandler } from './middleware/error.middleware';
 
 
@@ -29,6 +29,7 @@ mongoose
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/contact', contactRoutes)
+app.use('/api/file', mediaRoutes)
 
 // Error handling
 app.use(errorHandler);
